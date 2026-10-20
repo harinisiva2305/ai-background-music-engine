@@ -1,0 +1,165 @@
+
+openapi: 3.1.0
+
+info:
+  title: AI Background Music Engine
+  version: 1.0.0
+  description: >
+    API prototype for generating procedural instrumental
+    background music for video projects.
+
+servers:
+  - url: http://127.0.0.1:8000
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      summary: Check API health
+      operationId: healthCheck
+      responses:
+        "200":
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /ready:
+    get:
+      summary: Check API readiness
+      operationId: readinessCheck
+      responses:
+        "200":
+          description: API is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ready
+
+  /api/v1/music/jobs:
+    post:
+      summary: Submit a music generation job
+      operationId: createMusicJob
+      description: >
+        Queues a procedural music generation job and returns
+        a job identifier. Prompt-based AI music generation
+        is not implemented in the current prototype.
+      responses:
+        "202":
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "422":
+          description: Invalid request
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MusicJobRequest"
+            example:
+              prompt: Calm instrumental background music
+              duration_s: 10
+
+  /api/v1/jobs/{job_id}:
+    get:
+      summary: Get music job status
+      operationId: getMusicJob
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "404":
+          description: Job not found
+
+components:
+  schemas:
+    MusicJobRequest:
+      type: object
+      required:
+        - prompt
+        - duration_s
+      properties:
+        prompt:
+          type: string
+          minLength: 1
+          example: Calm instrumental background music
+        duration_s:
+          type: integer
+          minimum: 5
+          maximum: 300
+          example: 10
+        sections:
+          type: array
+          items:
+            type: object
+          nullable: true
+        tempo_bpm:
+          type: integer
+          minimum: 40
+          maximum: 240
+          nullable: true
+        key:
+          type: string
+          nullable: true
+        loopable:
+          type: boolean
+          default: false
+        narration_url:
+          type: string
+          nullable: true
+        seed:
+          type: integer
+          nullable: true
+        output:
+          type: string
+          default: wav
+
+    Job:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            - queued
+            - processing
+            - completed
+            - failed
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        prompt:
+          type: string
+        duration_s:
+          type: integer
+        result:
+          type: object
+          nullable: true
+        error:
+          type: string
