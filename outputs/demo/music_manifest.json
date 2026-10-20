@@ -1,0 +1,29 @@
+{
+  "title": "Procedural Background Music Demo",
+  "duration_s": 10,
+  "sample_rate_hz": 48000,
+  "tempo_bpm": 100,
+  "key": "C major / A minor",
+  "format": "WAV PCM 16-bit",
+  "generation_method": "procedural synthesis; no AI model",
+  "stems": {
+    "harmony": {
+      "file": "harmony.wav",
+      "gain": 0.65
+    },
+    "bass": {
+      "file": "bass.wav",
+      "gain": 0.7
+    },
+    "melody": {
+      "file": "melody.wav",
+      "gain": 0.65
+    },
+    "drums": {
+      "file": "drums.wav",
+      "gain": 0.55
+    }
+  },
+  "mix": "mix.wav",
+  "note": "Prototype using synthesized tones and percussion; not sampled acoustic instruments. Loudness and true peak compliance have not been measured."
+}
